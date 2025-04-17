@@ -67,7 +67,7 @@ def process_image(image, h_gain, s_gain, v_gain):
 interface = gr.Interface(
     fn=process_image,
     inputs=[
-        gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image"),
+        gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image", sources="upload"),
         gr.Slider(-1, 1, step=0.01, value=0.0, label="Hue Gain"),
         gr.Slider(-1, 1, step=0.01, value=0.0, label="Saturation Gain"),
         gr.Slider(-1, 1, step=0.01, value=0.00, label="Value Gain"),
