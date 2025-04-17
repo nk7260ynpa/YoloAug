@@ -34,6 +34,26 @@ class HSV(RandomHSV):
         return img
 
 def adjust_hsv(image, h_gain, s_gain, v_gain):
+    """
+    adjust the HSV values of the input image.
+
+    Args:
+        image (numpy.ndarray): Input image in BGR format.
+        h_gain (float): Hue gain value.
+        s_gain (float): Saturation gain value.
+        v_gain (float): Value gain value.
+
+    Returns:
+        numpy.ndarray: Augmented image in BGR format.
+        
+    Example:
+        >>> import cv2
+        >>> img = cv2.imread('path_to_image.jpg')
+        >>> h_gain = 0.5
+        >>> s_gain = 0.5
+        >>> v_gain = 0.5
+        >>> augmented_img = adjust_hsv(img, h_gain, s_gain, v_gain)
+    """
     hsv_augment = HSV(hgain=h_gain, sgain=s_gain, vgain=v_gain)
     augmented_image = hsv_augment(image)
     return augmented_image
