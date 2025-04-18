@@ -1,7 +1,8 @@
 import numpy as np
-from ultralytics.data.augment import RandomHSV
-import gradio as gr
 import cv2
+import gradio as gr
+
+from ultralytics.data.augment import RandomHSV
 
 class HSV(RandomHSV):
     def __call__(self, img):  # Convert RGB to BGR for OpenCV
