@@ -2,6 +2,30 @@
 
 This repository display the effects of ultralytics augmentation with gradio.
 
+## 📦 Run
+
+### Run with the current environment
+Run the following command to start the Gradio web app in your current environment:
+```shell
+python ShowImg.py
+```
+Go to http://127.0.0.1:7860
+
+### Run with Docker
+If you prefer to run the Gradio web app in a Docker container, follow these steps:
+
+1. **Pull the Docker image**:
+    ```shell
+    docker pull ultralytics/ultralytics:8.3.133
+    ```
+
+2. **Run the Docker container**:
+    ```shell
+    ```shell
+    docker run -p 7860:7860 -v $(pwd):/app ultralytics/ultralytics:8.3.133
+    ```
+    ```
+Go to http://127.0.0.1:7860
 
 ## 📜 License
 Ultralytics offers two licensing options to suit different needs:
