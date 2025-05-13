@@ -103,7 +103,8 @@ def adjust_hsv(image, h_gain, s_gain, v_gain):
     return augmented_image
 
 def process_image(image, *params):
-
+    if image is None:
+        return None
     bgr, degrees, translate, scale, shear, perspective, h_gain, s_gain, v_gain, flip_horizontal, flip_vertical = params
 
     if bgr:
@@ -141,7 +142,8 @@ interface = gr.Interface(
     outputs=gr.Image(type="numpy"),
     title="Affine Augmentation",
     description="Upload an image and adjust the sliders to apply affine transformations.",
-    allow_flagging="never"
+    allow_flagging="never",
+    live=True  
 )
 
 interface.launch(debug=True)
