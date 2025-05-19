@@ -1,8 +1,9 @@
-import numpy as np
 import random
+
 import cv2
 import gradio as gr
-from PIL import Image
+import numpy as np
+
 
 def mosaic4(imgs):
     """
@@ -15,14 +16,14 @@ def mosaic4(imgs):
         img4 (numpy.ndarray): The resulting mosaic image.
 
     Example:
-        >>> img1 = cv2.imread('image1.jpg')
-        >>> img2 = cv2.imread('image2.jpg')
-        >>> img3 = cv2.imread('image3.jpg')
-        >>> img4 = cv2.imread('image4.jpg')
+        >>> img1 = cv2.imread("image1.jpg")
+        >>> img2 = cv2.imread("image2.jpg")
+        >>> img3 = cv2.imread("image3.jpg")
+        >>> img4 = cv2.imread("image4.jpg")
         >>> mosaic_image = mosaic4([img1, img2, img3, img4])
-        >>> cv2.imshow('Mosaic Image', mosaic_image)
+        >>> cv2.imshow("Mosaic Image", mosaic_image)
         >>> cv2.waitKey(0)
-        >>> cv2.destroyAllWindows()  
+        >>> cv2.destroyAllWindows()
     """
     s = 480  # size of the mosaic
     border = (0, 0)  # border size
@@ -31,7 +32,7 @@ def mosaic4(imgs):
     for i in range(4):
         # Load image
         img = imgs[i]
-        img = cv2.resize(img, (s*2, s*2))  # resize to s x s
+        img = cv2.resize(img, (s * 2, s * 2))  # resize to s x s
         h, w = img.shape[:2]  # height, width
 
         # Place img in img4
@@ -52,6 +53,7 @@ def mosaic4(imgs):
         img4[y1a:y2a, x1a:x2a] = img[y1b:y2b, x1b:x2b]  # img4[ymin:ymax, xmin:xmax]
     return img4
 
+
 def process_images(img1, img2, img3, img4):
     """
     Process_images function to create a mosaic of 4 images.
@@ -66,31 +68,31 @@ def process_images(img1, img2, img3, img4):
         img (numpy.ndarray): The resulting mosaic image.
 
     Example:
-        >>> img1 = cv2.imread('image1.jpg')
-        >>> img2 = cv2.imread('image2.jpg')
-        >>> img3 = cv2.imread('image3.jpg')
-        >>> img4 = cv2.imread('image4.jpg')
+        >>> img1 = cv2.imread("image1.jpg")
+        >>> img2 = cv2.imread("image2.jpg")
+        >>> img3 = cv2.imread("image3.jpg")
+        >>> img4 = cv2.imread("image4.jpg")
         >>> mosaic_image = process_images(img1, img2, img3, img4)
-        >>> cv2.imshow('Mosaic Image', mosaic_image)
+        >>> cv2.imshow("Mosaic Image", mosaic_image)
         >>> cv2.waitKey(0)
         >>> cv2.destroyAllWindows()
     """
     img = mosaic4([img1, img2, img3, img4])
     return img
 
+
 with gr.Blocks() as demo:
-    
     gr.Markdown("## Upload 4 Images and Submit")
-    
+
     with gr.Row():
         img1 = gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image1", sources="upload")
         img2 = gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image2", sources="upload")
         img3 = gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image3", sources="upload")
         img4 = gr.Image(type="numpy", value="ultralytics/assets/zidane.jpg", label="Input Image4", sources="upload")
-         
+
     submit_btn = gr.Button("Submit")
     output = gr.Image(label="Processed Mosaic Image", type="numpy", elem_id="output_image")
     submit_btn.click(process_images, inputs=[img1, img2, img3, img4], outputs=output)
-    
+
 if __name__ == "__main__":
     demo.launch()

@@ -1,14 +1,16 @@
 import math
-import numpy as np
+
 import cv2
 import gradio as gr
-from ultralytics.data.augment import RandomPerspective
-from ultralytics.data.augment import RandomHSV
+import numpy as np
+
+from ultralytics.data.augment import RandomHSV, RandomPerspective
+
 
 class Perspective(RandomPerspective):
     """
     Apply random perspective transformation to the input image.
-    
+
     Args:
         degrees (float): Rotation angle in degrees.
         translate (float): Translation factor.
@@ -20,10 +22,11 @@ class Perspective(RandomPerspective):
 
     Example:
         >>> import cv2
-        >>> img = cv2.imread('path_to_image.jpg')
+        >>> img = cv2.imread("path_to_image.jpg")
         >>> perspective_augment = Perspective(degrees=10, translate=0.1, scale=0.1, shear=5, perspective=0.001)
         >>> augmented_img = perspective_augment(img)
     """
+
     def affine_transform(self, img, border):
         # Center
         self.size = img.shape[1] + border[1] * 2, img.shape[0] + border[0] * 2  # w, h
@@ -64,21 +67,22 @@ class Perspective(RandomPerspective):
             else:  # affine
                 img = cv2.warpAffine(img, M[:2], dsize=self.size, borderValue=(114, 114, 114))
         return img, M, s
-    
+
+
 class HSV(RandomHSV):
     def __call__(self, img):  # Convert RGB to BGR for OpenCV
         """
         Apply random HSV augmentation to the input image.
-        
+
         Args:
             img (numpy.ndarray): Input image in BGR format.
 
         Returns:
             numpy.ndarray: Augmented image in BGR format.
-        
+
         Example:
             >>> import cv2
-            >>> img = cv2.imread('path_to_image.jpg')
+            >>> img = cv2.imread("path_to_image.jpg")
             >>> hsv_augment = HSV(hgain=0.5, sgain=0.5, vgain=0.5)
             >>> augmented_img = hsv_augment(img)
         """
@@ -95,9 +99,10 @@ class HSV(RandomHSV):
         cv2.cvtColor(im_hsv, cv2.COLOR_HSV2BGR, dst=img)  # no return needed
         return img
 
+
 def adjust_hsv(image, h_gain, s_gain, v_gain):
     """
-    adjust the HSV values of the input image.
+    Adjust the HSV values of the input image.
 
     Args:
         image (numpy.ndarray): Input image in BGR format.
@@ -107,10 +112,10 @@ def adjust_hsv(image, h_gain, s_gain, v_gain):
 
     Returns:
         numpy.ndarray: Augmented image in BGR format.
-        
+
     Example:
         >>> import cv2
-        >>> img = cv2.imread('path_to_image.jpg')
+        >>> img = cv2.imread("path_to_image.jpg")
         >>> h_gain = 0.5
         >>> s_gain = 0.5
         >>> v_gain = 0.5
@@ -119,6 +124,7 @@ def adjust_hsv(image, h_gain, s_gain, v_gain):
     hsv_augment = HSV(hgain=h_gain, sgain=s_gain, vgain=v_gain)
     augmented_image = hsv_augment(image)
     return augmented_image
+
 
 def process_image(image, *params):
     """
@@ -138,12 +144,13 @@ def process_image(image, *params):
             - v_gain (float): Value gain value.
             - flip_horizontal (bool): Whether to flip the image horizontally.
             - flip_vertical (bool): Whether to flip the image vertically.
+
     Returns:
         numpy.ndarray: Processed image in BGR format.
 
     Example:
         >>> import cv2
-        >>> img = cv2.imread('path_to_image.jpg')
+        >>> img = cv2.imread("path_to_image.jpg")
         >>> params = (True, 10, 0.1, 0.1, 5, 0.001, -1, 1, 0.5, True, False)
         >>> processed_img = process_image(img, *params)
     """
@@ -153,8 +160,15 @@ def process_image(image, *params):
 
     if bgr:
         image = np.ascontiguousarray(image[..., ::-1])
-    affine_augment = Perspective(degrees=degrees, translate=translate, scale=scale, shear=shear, 
-                                 perspective=perspective, border=(0, 0), pre_transform=None)
+    affine_augment = Perspective(
+        degrees=degrees,
+        translate=translate,
+        scale=scale,
+        shear=shear,
+        perspective=perspective,
+        border=(0, 0),
+        pre_transform=None,
+    )
     image, _, _ = affine_augment.affine_transform(image, (0, 0))
 
     hsv_augment = HSV(hgain=h_gain, sgain=s_gain, vgain=v_gain)
@@ -164,8 +178,9 @@ def process_image(image, *params):
         image = cv2.flip(image, 1)
     if flip_vertical:
         image = cv2.flip(image, 0)
-        
+
     return image
+
 
 interface = gr.Interface(
     fn=process_image,
@@ -181,13 +196,13 @@ interface = gr.Interface(
         gr.Slider(-1, 1, step=0.01, value=0.0, label="Saturation Gain"),
         gr.Slider(-1, 1, step=0.01, value=0.00, label="Value Gain"),
         gr.Checkbox(label="Flip Horizontally"),
-        gr.Checkbox(label="Flip Vertically")
+        gr.Checkbox(label="Flip Vertically"),
     ],
     outputs=gr.Image(type="numpy"),
     title="Affine Augmentation",
     description="Upload an image and adjust the sliders to apply affine transformations.",
     allow_flagging="never",
-    live=True  
+    live=True,
 )
 
 interface.launch(debug=True)
